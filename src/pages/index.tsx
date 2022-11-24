@@ -1,5 +1,7 @@
 import { type NextPage } from "next";
 import Head from "next/head";
+import Link from "next/link";
+import { z } from "zod";
 
 const Home: NextPage = () => {
   return (
@@ -9,10 +11,20 @@ const Home: NextPage = () => {
         <meta name="description" content="Collection Tools" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main>
-        <button className="btn-primary btn">Button</button>
+      <main className="prose p-4">
+        <Box1 link="/crypt"> Crypt </Box1>
       </main>
     </>
+  );
+};
+
+const Box1 = ({ children, link }: { children: string; link: string }) => {
+  return (
+    <div className="m-4 p-2">
+       <h3>
+        <Link href={link}>{children}</Link>
+      </h3>
+    </div>
   );
 };
 
