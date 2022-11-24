@@ -1,49 +1,36 @@
 import { useState } from "react";
 
 import InputForm from "../components/InputForm";
-import OutputForm from "../components/OutputForm";
+import OutputBox from "../components/OutputBox";
 import Head from "next/head";
 
 const Crypt = () => {
   const [message1, setMessage1] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [resultText, updateResultText] = useState<string>("");
-  const [activeTab, setActiveTab] = useState<1 | 2>(1);
 
   return (
-    <main>
+    <main className="grid place-items-center md:pt-20">
       <Head>
         <title>Encrypt-Decrypt Text</title>
       </Head>
 
-      <div className="tabs tabs-boxed">
-        <a
-          onClick={() => setActiveTab(1)}
-          className={`tab ${activeTab === 1 ? "tab-active" : ""}`}
-        >
-          Input
-        </a>
-        <a
-          onClick={() => setActiveTab(2)}
-          className={`tab ${activeTab === 2 ? "tab-active" : ""}`}
-        >
-          Result
-        </a>
-      </div>
-
-      <p>{message1}</p>
+      <h2>Encrypt / Decrypt Text</h2>
 
       <InputForm
         updateResultText={updateResultText}
         setMessage1={setMessage1}
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
+        setIsLoading={setIsLoading}
       />
 
-      <OutputForm
-
-        resultText={resultText}
-        activeTab={activeTab}
-      />
+      {isLoading ? (
+        <progress className="progress progress-primary mt-4 w-56"></progress>
+      ) : (
+        <>
+          <p className="mt-4">{message1}</p>
+          <OutputBox resultText={resultText} />
+        </>
+      )}
     </main>
   );
 };

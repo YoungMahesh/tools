@@ -1,69 +1,98 @@
-import { useState } from "react"
+import { useState } from "react";
 
 interface ListProps {
-	updateResultText: Function
-	setMessage1: Function
-	activeTab: 1 | 2
-	setActiveTab: Function
+  updateResultText: Function;
+  setMessage1: Function;
+  setIsLoading: Function;
 }
 
-const InputForm = ({  updateResultText, setMessage1,  activeTab, setActiveTab }: ListProps) => {
+const InputForm = ({
+  updateResultText,
+  setMessage1,
+  setIsLoading,
+}: ListProps) => {
+  const [inputText, updateInputText] = useState<string>("");
+  const [password, updatePassword] = useState<string>("");
 
-	const [inputText, updateInputText] = useState<string>('')
-	const [password, updatePassword] = useState<string>('')
+  const cryptText = async (type: string) => {
+    setMessage1("");
+    if (inputText.length === 0 || password.length === 0) {
+      return setMessage1("Text or Password should not be empty");
+    }
 
-	const cryptText = async (type: string) => {
-		if (inputText.length === 0 || password.length === 0) {
-			return setMessage1('Text or Password should not be empty')
-		}
+    setIsLoading(true);
+    updateResultText("");
 
-		setMessage1('Loading...')
-		updateResultText('')
-		setActiveTab(2)
-		const dataObj = {
-			type: type,
-			text: inputText,
-			password: password
-		}
+    const dataObj = {
+      type: type,
+      text: inputText,
+      password: password,
+    };
 
-		const resp0 = await fetch(`/api/crypt`, {
-			method: 'POST',
-			body: JSON.stringify(dataObj)
-		})
+    const resp0 = await fetch(`/api/crypt`, {
+      method: "POST",
+      body: JSON.stringify(dataObj),
+    });
 
-		if (resp0.status === 400) {
-			return setMessage1('Text and Password combination is wrong')
-		}
+    if (resp0.status === 400) {
+      setIsLoading(false);
+      return setMessage1("Text and Password combination is wrong");
+    }
 
-		setMessage1('')
-		const resp1 = await resp0.json()
+    const resp1 = await resp0.json();
+    updateResultText(resp1.result);
+    setIsLoading(false);
+  };
 
-		updateResultText(resp1.result)
-	}
+  return (
+    <div>
+      <div className="form-control">
+        <textarea
+          className="textarea-primary textarea mb-2 w-full md:w-96"
+          placeholder="Text to Encrypt/Decrypt"
+          rows={10}
+          value={inputText}
+          onChange={(e) => updateInputText(e.target.value)}
+        ></textarea>
 
-	return (
-		<form style={{ display: activeTab === 1 ? 'none' : 'block' }}>
-			<div className='form-left-part'>
-				<label> Text: </label>
-				<textarea value={inputText} onChange={e => updateInputText(e.target.value)} ></textarea>
-			</div>
+        <input
+          className="input-bordered input-primary input"
+          placeholder="Password"
+          type="text"
+          value={password}
+          onChange={(e) => updatePassword(e.target.value)}
+        />
+      </div>
 
-			<div className='form-right-part'>
-				<label> Password: </label>
-				<input type='text' value={password} onChange={e => updatePassword(e.target.value)} />
+      <div>
+        <button
+          className="btn-primary btn mt-2 mr-2"
+          onClick={() => cryptText("encrypt")}
+        >
+          Encrypt{" "}
+        </button>
 
-				<input type='button' value='Encrypt' onClick={() => cryptText('encrypt')} />
+        <button
+          className="btn-primary btn mt-2 mr-2"
+          onClick={() => cryptText("decrypt")}
+        >
+          Decrypt{" "}
+        </button>
 
-				<input type='button' value='Decrypt' onClick={() => cryptText('decrypt')} />
+        <button
+          className="btn-primary btn mt-2"
+          onClick={() => {
+            updateInputText("");
+            updatePassword("");
+            updateResultText("");
+            setMessage1("");
+          }}
+        >
+          Clear{" "}
+        </button>
+      </div>
+    </div>
+  );
+};
 
-				<input type='button' value='Clear' onClick={() => {
-					updateInputText('')
-					updatePassword('')
-					updateResultText('')
-				}} />
-			</div>
-		</form>
-	)
-}
-
-export default InputForm
+export default InputForm;
