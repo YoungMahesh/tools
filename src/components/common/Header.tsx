@@ -33,6 +33,9 @@ export default function Header() {
                 <Link href="/evm">EVM Wallets</Link>
               </li>
               <li>
+                <Link href="/solana">Solana Wallets</Link>
+              </li>
+              <li>
                 <a
                   href="https://github.com/YoungMahesh/tools"
                   target="_blank"

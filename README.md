@@ -1,5 +1,7 @@
 - Todo
 	- [x] Add `forest` theme
 	- [x] Add Header
-	- [ ] Integrate Random-Wallets
+	- [x] Integrate Random-Wallets
+	- [ ] Integrate Converter
+	- [ ] Integrate Calculator
 	- [ ] Message signer using Web3 wallet

@@ -13,6 +13,7 @@ const Home: NextPage = () => {
       <main className="flex flex-wrap p-4">
         <Box1 link="/crypt"> Crypt </Box1>
         <Box1 link="/evm"> EVM Wallets </Box1>
+        <Box1 link="/solana"> Solana Wallets </Box1>
       </main>
     </>
   );
