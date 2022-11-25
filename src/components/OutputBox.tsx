@@ -1,6 +1,5 @@
 interface ListProps {
   resultText: string;
-
 }
 
 const OutputBox = ({ resultText }: ListProps) => {

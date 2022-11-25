@@ -6,9 +6,11 @@
     "build": "next build",
     "dev": "next dev",
     "lint": "next lint",
-    "start": "next start"
+    "start": "next start",
+    "format": "prettier --write src/"
   },
   "dependencies": {
+    "@heroicons/react": "^2.0.13",
     "daisyui": "^2.42.0",
     "next": "13.0.2",
     "react": "18.2.0",

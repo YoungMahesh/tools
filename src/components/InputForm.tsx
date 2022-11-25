@@ -1,9 +1,9 @@
 import { useState } from "react";
 
 interface ListProps {
-  updateResultText: Function;
-  setMessage1: Function;
-  setIsLoading: Function;
+  updateResultText: (result: string) => void;
+  setMessage1: (message: string) => void;
+  setIsLoading: (isLoading: boolean) => void;
 }
 
 const InputForm = ({

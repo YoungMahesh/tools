@@ -1,7 +1,6 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
-import { z } from "zod";
 
 const Home: NextPage = () => {
   return (
@@ -21,7 +20,7 @@ const Home: NextPage = () => {
 const Box1 = ({ children, link }: { children: string; link: string }) => {
   return (
     <div className="m-4 p-2">
-       <h3>
+      <h3>
         <Link href={link}>{children}</Link>
       </h3>
     </div>

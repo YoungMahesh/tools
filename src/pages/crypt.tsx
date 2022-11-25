@@ -10,7 +10,7 @@ const Crypt = () => {
   const [resultText, updateResultText] = useState<string>("");
 
   return (
-    <main className="grid place-items-center md:pt-20">
+    <main className="grid place-items-center md:pt-16">
       <Head>
         <title>Encrypt-Decrypt Text</title>
       </Head>
