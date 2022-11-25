@@ -30,6 +30,9 @@ export default function Header() {
                 <Link href="/crypt">Crypt</Link>
               </li>
               <li>
+                <Link href="/evm">EVM Wallets</Link>
+              </li>
+              <li>
                 <a
                   href="https://github.com/YoungMahesh/tools"
                   target="_blank"

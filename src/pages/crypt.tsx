@@ -1,7 +1,7 @@
 import { useState } from "react";
 
-import InputForm from "../components/InputForm";
-import OutputBox from "../components/OutputBox";
+import InputForm from "../components/crypt/InputForm";
+import OutputBox from "../components/crypt/OutputBox";
 import Head from "next/head";
 
 const Crypt = () => {

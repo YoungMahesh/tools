@@ -10,8 +10,9 @@ const Home: NextPage = () => {
         <meta name="description" content="Collection Tools" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="p-4">
+      <main className="flex flex-wrap p-4">
         <Box1 link="/crypt"> Crypt </Box1>
+        <Box1 link="/evm"> EVM Wallets </Box1>
       </main>
     </>
   );

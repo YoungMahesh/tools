@@ -1,3 +1,5 @@
 - Todo
 	- [x] Add `forest` theme
 	- [x] Add Header
+	- [ ] Integrate Random-Wallets
+	- [ ] Message signer using Web3 wallet
