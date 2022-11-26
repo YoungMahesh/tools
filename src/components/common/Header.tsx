@@ -39,6 +39,9 @@ export default function Header() {
                 <Link href="/fd">FD Calc</Link>
               </li>
               <li>
+                <Link href="/loan">Loan Calc</Link>
+              </li>
+              <li>
                 <a
                   href="https://github.com/YoungMahesh/tools"
                   target="_blank"

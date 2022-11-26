@@ -2,6 +2,7 @@
 	- [x] Add `forest` theme
 	- [x] Add Header
 	- [x] Integrate Random-Wallets
-	- [ ] Integrate Calculators
+	- [x] Integrate Calculators
 	- [ ] Pagination to Calculators
+	- [ ] Download FD/Loan Table data
 	- [ ] Message signer using Web3 wallet
