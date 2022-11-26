@@ -2,6 +2,6 @@
 	- [x] Add `forest` theme
 	- [x] Add Header
 	- [x] Integrate Random-Wallets
-	- [ ] Integrate Converter
-	- [ ] Integrate Calculator
+	- [ ] Integrate Calculators
+	- [ ] Pagination to Calculators
 	- [ ] Message signer using Web3 wallet

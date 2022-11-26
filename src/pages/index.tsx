@@ -14,6 +14,7 @@ const Home: NextPage = () => {
         <Box1 link="/crypt"> Crypt </Box1>
         <Box1 link="/evm"> EVM Wallets </Box1>
         <Box1 link="/solana"> Solana Wallets </Box1>
+        <Box1 link="/fd"> Fixed Deposit Calculator</Box1>
       </main>
     </>
   );

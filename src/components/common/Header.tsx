@@ -36,6 +36,9 @@ export default function Header() {
                 <Link href="/solana">Solana Wallets</Link>
               </li>
               <li>
+                <Link href="/fd">FD Calc</Link>
+              </li>
+              <li>
                 <a
                   href="https://github.com/YoungMahesh/tools"
                   target="_blank"
