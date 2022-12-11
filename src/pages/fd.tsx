@@ -2,7 +2,8 @@ import { useState } from "react";
 import Head1 from "../components/common/Head1";
 import Layout from "../components/common/Layout";
 import FDInput from "../components/fd/FDInput";
-import FDTable, { FDDataRow } from "../components/fd/FDTable";
+import FDTable from "../components/fd/FDTable";
+import type { FDDataRow } from "../components/fd/FDTable";
 
 export default function FD() {
   const [dataArr, setDataArr] = useState<FDDataRow[]>([]);

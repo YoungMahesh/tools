@@ -12,10 +12,12 @@
   "dependencies": {
     "@heroicons/react": "^2.0.13",
     "@solana/web3.js": "^1.66.2",
+    "copy-to-clipboard": "^3.3.3",
     "daisyui": "^2.42.0",
     "ethers": "^5.7.2",
     "next": "13.0.2",
     "react": "18.2.0",
+    "react-datepicker": "^4.8.0",
     "react-dom": "18.2.0",
     "zod": "^3.18.0"
   },
@@ -23,6 +25,7 @@
     "@tailwindcss/typography": "^0.5.8",
     "@types/node": "^18.0.0",
     "@types/react": "^18.0.14",
+    "@types/react-datepicker": "^4.8.0",
     "@types/react-dom": "^18.0.5",
     "@typescript-eslint/eslint-plugin": "^5.33.0",
     "@typescript-eslint/parser": "^5.33.0",

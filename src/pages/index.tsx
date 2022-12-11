@@ -10,12 +10,13 @@ const Home: NextPage = () => {
         <meta name="description" content="Collection Tools" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="flex flex-wrap p-4">
+      <main className="flex flex-wrap justify-center p-4">
         <Box1 link="/crypt"> Crypt </Box1>
         <Box1 link="/evm"> EVM Wallets </Box1>
         <Box1 link="/solana"> Solana Wallets </Box1>
         <Box1 link="/fd"> Fixed Deposit Calculator</Box1>
         <Box1 link="/loan">Loan Calculator</Box1>
+        <Box1 link="/converter">Time Coverter</Box1>
       </main>
     </>
   );

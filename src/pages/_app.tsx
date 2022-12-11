@@ -3,6 +3,7 @@ import Header from "../components/common/Header";
 import Layout from "../components/common/Layout";
 
 import "../styles/globals.css";
+import "react-datepicker/dist/react-datepicker.css";
 
 const MyApp: AppType = ({ Component, pageProps }) => {
   return (

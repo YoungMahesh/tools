@@ -2,7 +2,8 @@ import { useState } from "react";
 import Head1 from "../components/common/Head1";
 import Layout from "../components/common/Layout";
 import LoanInput from "../components/loan/LoanInput";
-import LoanTable, { LoanDataRow } from "../components/loan/LoanTable";
+import LoanTable from "../components/loan/LoanTable";
+import type { LoanDataRow } from "../components/loan/LoanTable";
 
 export default function Loan() {
   const [dataArr, setDataArr] = useState<LoanDataRow[]>([]);
