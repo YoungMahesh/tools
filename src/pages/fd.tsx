@@ -10,7 +10,10 @@ export default function FD() {
 
   return (
     <Layout>
-      <Head1 title="FD Calculator" />
+      <Head1
+        title="FD Calculator"
+        description="Calculate monthly balance of Fixed-Deposit"
+      />
       <div className="p-2 md:p-6">
         <FDInput setDataArr={setDataArr} />
         <FDTable dataArr={dataArr} />

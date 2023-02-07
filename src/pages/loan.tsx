@@ -10,7 +10,7 @@ export default function Loan() {
 
   return (
     <Layout>
-      <Head1 title="Loan Caculator" />
+      <Head1 title="Loan Caculator" description="Calculate EMI of Loan" />
       <div className="p-2 md:p-6">
         <LoanInput setDataArr={setDataArr} />
         <LoanTable dataArr={dataArr} />

@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import InputForm from "../components/crypt/InputForm";
 import OutputBox from "../components/crypt/OutputBox";
-import Head from "next/head";
+import Head1 from "../components/common/Head1";
 
 const Crypt = () => {
   const [message1, setMessage1] = useState<string>("");
@@ -11,9 +11,7 @@ const Crypt = () => {
 
   return (
     <main className="grid place-items-center md:pt-16">
-      <Head>
-        <title>Encrypt-Decrypt Text</title>
-      </Head>
+      <Head1 title="Text-Encryption" description="Encryp Decrypt Text" />
 
       <h2>Encrypt / Decrypt Text</h2>
 

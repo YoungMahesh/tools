@@ -1,15 +1,14 @@
 import type { NextPage } from "next";
-import Head from "next/head";
+import Head1 from "../components/common/Head1";
 import SolanaWallets from "../components/solana/SolanaWallets";
 
 const Solana: NextPage = () => {
   return (
     <main>
-      <Head>
-        <title>Solana Wallets</title>
-        <meta name="description" content="Generate Random Solana Wallet" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+      <Head1
+        title="Solana Wallets"
+        description="Generate Random Solana Wallet"
+      />
 
       <SolanaWallets />
     </main>

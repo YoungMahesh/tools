@@ -1,4 +1,5 @@
 ### Todo
+- Same layout for all pages
 - Pagination to Calculators
 - Download FD/Loan Table data
 - Message signer using Web3 wallet

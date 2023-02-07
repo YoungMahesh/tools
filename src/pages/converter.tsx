@@ -5,7 +5,10 @@ import TimeConverter from "../components/converter/timeConverter";
 export default function Coverter() {
   return (
     <Layout>
-      <Head1 title="Time Converter" />
+      <Head1
+        title="Time Converter"
+        description="Convert between Unix-time and Calendar-time"
+      />
 
       <TimeConverter />
     </Layout>

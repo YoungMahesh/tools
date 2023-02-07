@@ -1,15 +1,15 @@
 import { type NextPage } from "next";
-import Head from "next/head";
 import Link from "next/link";
+import Head1 from "../components/common/Head1";
 
 const Home: NextPage = () => {
   return (
     <>
-      <Head>
-        <title>Tools</title>
-        <meta name="description" content="Collection Tools" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+      <Head1
+        title="Tools"
+        description="Collection of Scripts useful in daily-life"
+      />
+
       <main className="flex flex-wrap justify-center p-4">
         <Box1 link="/crypt"> Crypt </Box1>
         <Box1 link="/evm"> EVM Wallets </Box1>
