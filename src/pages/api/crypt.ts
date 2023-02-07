@@ -24,10 +24,9 @@ export default async function handler(
         decrypted += decipher.final("utf8");
         result = decrypted;
       }
-      console.log("Crypt request: Completed", result);
       res.status(200).send({ result });
     } catch (err) {
-      console.log("Crypt request: Failed\n", err);
+      console.log(err);
       res.status(400).end();
     }
   }

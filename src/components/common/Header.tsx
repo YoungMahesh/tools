@@ -45,6 +45,9 @@ export default function Header() {
                 <Link href="/converter">Time Converter</Link>
               </li>
               <li>
+                <Link href="/sign">Web3 Sign</Link>
+              </li>
+              <li>
                 <a
                   href="https://github.com/YoungMahesh/tools"
                   target="_blank"

@@ -15,6 +15,7 @@ const Home: NextPage = () => {
       <Box1 link="/fd"> Fixed Deposit Calculator</Box1>
       <Box1 link="/loan">Loan Calculator</Box1>
       <Box1 link="/converter">Time Coverter</Box1>
+      <Box1 link="/sign">Web3 Sign</Box1>
     </main>
   );
 };
