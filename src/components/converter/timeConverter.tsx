@@ -8,6 +8,10 @@ export default function TimeConverter() {
   const [date, setDate] = useState<null | Date>(new Date());
   const [cTime, setCtime] = useState("");
 
+  const pasteTime = async () => {
+    const text = await navigator.clipboard.readText();
+    setTime(parseInt(text));
+  };
   const dateToSeconds = () => {
     const date1 = date ? date : new Date(0);
     const seconds = Math.floor(date1.getTime() / 1000);
@@ -16,7 +20,6 @@ export default function TimeConverter() {
 
   const secondsToDate = () => {
     const date = new Date(time * 1000);
-    setDate(date);
     setCDate(date.toString());
   };
   return (
@@ -32,6 +35,9 @@ export default function TimeConverter() {
             onChange={(e) => setTime(parseInt(e.target.value))}
           />
           <div className="card-actions justify-end">
+            <button onClick={pasteTime} className="btn-outline btn-primary btn">
+              Paste
+            </button>
             <button onClick={secondsToDate} className="btn-primary btn">
               Convert
             </button>
@@ -55,17 +61,19 @@ export default function TimeConverter() {
               Convert
             </button>
           </div>
-          <div className="flex flex-wrap items-center">
-            <p>{cTime}</p>
-            <button
-              onClick={() => {
-                copy(cTime);
-              }}
-              className="btn-outline btn-primary btn"
-            >
-              Copy
-            </button>
-          </div>
+          {cTime.length ? (
+            <div className="flex flex-wrap items-center">
+              <p>{cTime}</p>
+              <button
+                onClick={() => {
+                  copy(cTime);
+                }}
+                className="btn-outline btn-primary btn"
+              >
+                Copy
+              </button>
+            </div>
+          ) : null}
         </div>
       </section>
     </div>

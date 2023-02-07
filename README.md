@@ -1,8 +1,9 @@
-- Todo
-	- [x] Add `forest` theme
-	- [x] Add Header
-	- [x] Integrate Random-Wallets
-	- [x] Integrate Calculators
-	- [ ] Pagination to Calculators
-	- [ ] Download FD/Loan Table data
-	- [ ] Message signer using Web3 wallet
+### Todo
+- Pagination to Calculators
+- Download FD/Loan Table data
+- Message signer using Web3 wallet
+- Mention types of encryption in text-encryption in tools
+- rgb css to hex and vice-versa
+
+### Issues
+
