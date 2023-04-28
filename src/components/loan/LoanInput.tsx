@@ -3,50 +3,67 @@ import type { LoanDataRow } from "./LoanTable";
 
 export default function LoanInput({
   setDataArr,
+  setMonthsRequired,
+  setYearsRequired,
 }: {
   setDataArr: (_: LoanDataRow[]) => void;
+  setMonthsRequired: (_: number) => void;
+  setYearsRequired: (_: number) => void;
 }) {
   const [amount, setAmount] = useState("");
   const [interest, setInterest] = useState("");
   const [emi, setEmi] = useState("");
 
-  const calculateInterest = (currAmt: number) => {
-    const yearInterest = (currAmt * parseFloat(interest)) / 100;
+  const monthlyInterest = (currAmt: number) => {
+    const _interest = parseFloat(interest.replace(/,/g, ""));
+
+    const yearInterest = (currAmt * _interest) / 100;
     const monthInterest = yearInterest / 12;
     return parseFloat(monthInterest.toFixed(2));
   };
 
   const generateLoanData = () => {
     try {
+      const _amount = parseFloat(amount.replace(/,/g, ""));
+      const _emi = parseFloat(emi.replace(/,/g, ""));
+
       const dataArr1: LoanDataRow[] = [];
       dataArr1.push({
         month: 0,
-        amount: parseInt(amount),
+        amount: _amount,
         debit: 0,
         credit: 0,
       });
       let currMonth = 1;
-      let currAmt = parseInt(amount);
+      let currAmt = _amount;
       while (currAmt > 0) {
-        const currInterest = calculateInterest(currAmt);
-        currAmt += currInterest;
+        const monthInterest = monthlyInterest(currAmt);
+
+        if (monthInterest > _emi)
+          return alert(
+            "EMI is less than monthly-interest, loan will never be paid off"
+          );
+
+        currAmt += monthInterest;
         currAmt = parseFloat(currAmt.toFixed(2));
         dataArr1.push({
           month: currMonth,
-          debit: currInterest,
+          debit: monthInterest,
           credit: 0,
           amount: currAmt,
         });
-        currAmt -= parseInt(emi);
+        currAmt -= _emi;
         currAmt = parseFloat(currAmt.toFixed(2));
         dataArr1.push({
           month: currMonth,
           debit: 0,
-          credit: parseInt(emi),
+          credit: _emi,
           amount: currAmt,
         });
         currMonth += 1;
       }
+      setMonthsRequired(currMonth - 1);
+      setYearsRequired(parseFloat(((currMonth - 1) / 12).toFixed(2)));
       setDataArr(dataArr1);
     } catch (err) {
       console.log(err);

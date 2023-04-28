@@ -5,14 +5,26 @@ export interface LoanDataRow {
   amount: number;
 }
 
-export default function LoanTable({ dataArr }: { dataArr: LoanDataRow[] }) {
+export default function LoanTable({
+  dataArr,
+  monthsRequired,
+  yearsRequired,
+}: {
+  dataArr: LoanDataRow[];
+  monthsRequired: number;
+  yearsRequired: number;
+}) {
   return (
     <section className="overflow-x-auto">
+      <p className="flex justify-center">
+        <span className="alert">Months Required: {monthsRequired}</span>
+        <span className="alert">Years Required: {yearsRequired}</span>
+      </p>
       <table className="table w-full">
         <thead>
           <tr>
             <td>Month</td>
-            <td align="right">Debit</td>
+            <td align="right">Interest</td>
             <td align="right">Credit</td>
             <td align="right">Amount Remaining</td>
           </tr>

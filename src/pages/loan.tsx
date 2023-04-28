@@ -6,12 +6,22 @@ import type { LoanDataRow } from "../components/loan/LoanTable";
 
 export default function Loan() {
   const [dataArr, setDataArr] = useState<LoanDataRow[]>([]);
+  const [monthsRequired, setMonthsRequired] = useState(0);
+  const [yearsRequired, setYearsRequired] = useState(0);
 
   return (
-    <div className="p-2 md:p-6">
-      <Head1 title="Loan Caculator" description="Calculate EMI of Loan" />
-      <LoanInput setDataArr={setDataArr} />
-      <LoanTable dataArr={dataArr} />
+    <div className="p-2 py-4 md:px-12">
+      <Head1 title="Loan Calculator" description="Calculate EMI of Loan" />
+      <LoanInput
+        setDataArr={setDataArr}
+        setMonthsRequired={setMonthsRequired}
+        setYearsRequired={setYearsRequired}
+      />
+      <LoanTable
+        dataArr={dataArr}
+        monthsRequired={monthsRequired}
+        yearsRequired={yearsRequired}
+      />
     </div>
   );
 }
