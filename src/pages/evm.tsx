@@ -1,6 +1,7 @@
 import type { NextPage } from "next";
 import Head1 from "../components/common/Head1";
 import EVMWallets from "../components/evm/EVMWallets";
+import EVMWalletsFromPhrase from "../components/evm/EVMWalletsFromPhrase";
 
 const EVM: NextPage = () => {
   return (
@@ -11,6 +12,8 @@ const EVM: NextPage = () => {
       />
 
       <EVMWallets />
+      <hr className="divider"></hr>
+      <EVMWalletsFromPhrase />
     </main>
   );
 };
