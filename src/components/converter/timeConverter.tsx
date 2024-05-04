@@ -4,7 +4,8 @@ import copy from "copy-to-clipboard";
 
 export default function TimeConverter() {
   const [time, setTime] = useState(0);
-  const [cDate, setCDate] = useState("");
+  const [cLocalDate, setCLocalDate] = useState("");
+  const [cUTCDate, setCUTCDate] = useState("");
   const [date, setDate] = useState<null | Date>(new Date());
   const [cTime, setCtime] = useState("");
 
@@ -20,7 +21,8 @@ export default function TimeConverter() {
 
   const secondsToDate = () => {
     const date = new Date(time * 1000);
-    setCDate(date.toString());
+    setCLocalDate(date.toString());
+    setCUTCDate(date.toUTCString());
   };
   return (
     <div className="flex w-full flex-wrap justify-around">
@@ -42,7 +44,12 @@ export default function TimeConverter() {
               Convert
             </button>
           </div>
-          <p>{cDate}</p>
+          {cLocalDate.length ? (
+            <p className="m-1">Local: {cLocalDate}</p>
+          ) : (
+            <></>
+          )}
+          {cUTCDate.length ? <p className="m-1">UTC: {cUTCDate}</p> : <></>}
         </div>
       </section>
 
