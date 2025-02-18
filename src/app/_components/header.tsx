@@ -43,7 +43,7 @@ export default function Header() {
                 <Link href="/loan">Loan Calc</Link>
               </li>
               <li>
-                <Link href="/converter">Time Converter</Link>
+                <Link href="/converter">Converter</Link>
               </li>
               <li>
                 <Link href="/sign">Web3 Sign</Link>

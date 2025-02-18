@@ -8,7 +8,7 @@ export default function Home() {
       <Box1 link="/solana"> Solana Wallets </Box1>
       <Box1 link="/fd"> Fixed Deposit Calculator</Box1>
       <Box1 link="/loan">Loan Calculator</Box1>
-      <Box1 link="/converter">Time Coverter</Box1>
+      <Box1 link="/converter">Coverter</Box1>
       <Box1 link="/hex">Hex Coverter</Box1>
       <Box1 link="/sign">Web3 Sign</Box1>
     </main>
