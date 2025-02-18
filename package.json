@@ -10,8 +10,10 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
+    "copy-to-clipboard": "^3.3.3",
     "next": "15.1.7",
     "react": "^19.0.0",
+    "react-datepicker": "^8.1.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
