@@ -60,7 +60,7 @@ export default function TimeConverter() {
           <DatePicker
             showTimeSelect
             selected={date}
-            onChange={(date) => setDate(date)}
+            onChange={(date: Date | null) => setDate(date)}
             dateFormat="MMMM d, yyyy h:mm aa"
             showYearDropdown
           />
@@ -73,15 +73,18 @@ export default function TimeConverter() {
             <div className="flex flex-wrap items-center">
               <p>{cTime}</p>
               <button
+                className="btn-outline btn-primary btn m-2"
                 onClick={() => {
                   copy(cTime);
+                  alert(`Copied: ${cTime}`);
                 }}
-                className="btn-outline btn-primary btn"
               >
                 Copy
               </button>
             </div>
-          ) : null}
+          ) : (
+            <></>
+          )}
         </div>
       </section>
     </div>

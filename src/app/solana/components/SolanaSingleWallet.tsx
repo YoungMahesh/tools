@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Keypair } from "@solana/web3.js";
-import { base58 } from "ethers/lib/utils";
+import bs58 from "bs58";
 import KeyBox from "@/app/_components/KeyBox";
 
 export default function SolanaSingleWallet() {
@@ -9,30 +9,30 @@ export default function SolanaSingleWallet() {
   const [secretKey2, setSecretKey2] = useState("");
   const [privateK, setPrivateK] = useState("");
 
-  const derivePublicKey = () => {
+  const derivePublicKey = async () => {
     try {
-      let _secKey: string | Uint8Array = new Uint8Array([]);
+      let _secKey: Uint8Array = new Uint8Array([]);
       if (privateK[0] !== "[") {
-        _secKey = base58.decode(privateK.trim());
+        _secKey = bs58.decode(privateK.trim());
       } else {
         _secKey = Uint8Array.from(JSON.parse(privateK.trim()));
       }
-      const keypair = Keypair.fromSecretKey(_secKey);
+      const keypair = await Keypair.fromSecretKey(_secKey);
       setPubkey(keypair.publicKey.toString());
       setSecretKey("[" + keypair.secretKey + "]");
-      setSecretKey2(base58.encode(keypair.secretKey));
+      setSecretKey2(bs58.encode(keypair.secretKey));
     } catch (err) {
       alert("Invalid private key");
       console.error(err)
     }
   };
 
-  const generateKeyPair = () => {
-    const keypair = Keypair.generate();
+  const generateKeyPair = async () => {
+    const keypair = await Keypair.generate();
 
     setPubkey(keypair.publicKey.toString());
     setSecretKey("[" + keypair.secretKey + "]");
-    setSecretKey2(base58.encode(keypair.secretKey));
+    setSecretKey2(bs58.encode(keypair.secretKey));
   };
 
   const clearFields = () => {

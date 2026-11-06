@@ -1,12 +1,18 @@
 import { useState } from "react";
 import * as bip39 from "bip39";
 import { Keypair } from "@solana/web3.js";
-import { base58 } from "ethers/lib/utils";
+import bs58 from "bs58";
 import WalletBox from "@/app/_components/WalletBox";
 //import { HDKey } from "micro-ed25519-hdkey";
 // micro-ed25519-hdkey author message: This package has been deprecated; 
 //    Switch to micro-key-producer: the package has been merged into it
 import HDKey from "micro-key-producer/slip10.js";
+
+interface IWallet {
+  pubAddr: string;
+  privKey: string;
+  privKeyText: string;
+}
 
 export default function SolanaWalletsFromSeedPhrase() {
   const [seedPhrase, setSeedPhrase] = useState("");
@@ -23,14 +29,14 @@ export default function SolanaWalletsFromSeedPhrase() {
       // https://solana.com/developers/cookbook/wallets/restore-from-mnemonic
       // arguments: (mnemonic, password)
       const seed = bip39.mnemonicToSeedSync(seedPhrase, "");
-      const hd = HDKey.fromMasterSeed(seed.toString("hex"));
+      const hd = HDKey.fromMasterSeed(new Uint8Array(seed));
       for (let i = 0; i < 10; i++) {
         const path = `m/44'/501'/${i}'/0'`;
-        const keypair = Keypair.fromSeed(hd.derive(path).privateKey);
+        const keypair = await Keypair.fromSeed(hd.derive(path).privateKey);
         _walletsArr.push({
           pubAddr: keypair.publicKey.toBase58(),
           privKey: keypair.secretKey.toString(),
-          privKeyText: base58.encode(keypair.secretKey),
+          privKeyText: bs58.encode(keypair.secretKey),
         });
       }
       setSeedPhr1(seedPhrase);
@@ -104,10 +110,4 @@ export default function SolanaWalletsFromSeedPhrase() {
       </div>
     </section>
   );
-}
-
-interface IWallet {
-  pubAddr: string;
-  privKey: string;
-  privKeyText: string;
 }

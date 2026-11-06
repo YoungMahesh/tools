@@ -1,6 +1,6 @@
 'use client'
 import { useState } from "react";
-import { Wallet, wordlists } from "ethers";
+import { HDNodeWallet, Wallet } from "ethers";
 import WalletBox from "@/app/_components/WalletBox";
 
 export default function EVMWalletsFromPhrase() {
@@ -19,10 +19,10 @@ export default function EVMWalletsFromPhrase() {
       const _walletsArr: { pubAddr: string; privKey: string }[] = [];
       // TODO: show loading while wallet generation is in progress
       for (let i = 0; i < 10; i++) {
-        const wallet = Wallet.fromMnemonic(
+        const wallet = HDNodeWallet.fromPhrase(
           seedPhrase,
-          `m/44'/60'/0'/0/${i}`,
-          wordlists.en
+          undefined,
+          `m/44'/60'/0'/0/${i}`
         );
         console.log(wallet);
         _walletsArr.push({
@@ -42,7 +42,9 @@ export default function EVMWalletsFromPhrase() {
   const generateSeedPhrase = () => {
     const _seedPhrase = Wallet.createRandom().mnemonic;
     console.log(_seedPhrase);
-    setSeedPhrase(_seedPhrase.phrase);
+    if (_seedPhrase) {
+      setSeedPhrase(_seedPhrase.phrase);
+    }
   };
 
   return (
