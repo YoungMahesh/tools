@@ -1,7 +1,9 @@
 "use client";
+
 import { useState } from "react";
 import InputForm from "./InputForm";
 import OutputBox from "./OutputBox";
+import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
 
 export default function EncryptText() {
   const [message1, setMessage1] = useState<string>("");
@@ -9,23 +11,30 @@ export default function EncryptText() {
   const [resultText, updateResultText] = useState<string>("");
 
   return (
-    <main className="grid place-items-center md:pt-16">
-      <h2>Encrypt / Decrypt Text</h2>
-
+    <div className="w-full">
       <InputForm
         updateResultText={updateResultText}
         setMessage1={setMessage1}
         setIsLoading={setIsLoading}
       />
 
-      {isLoading ? (
-        <progress className="progress progress-primary mt-4 w-56"></progress>
-      ) : (
-        <>
-          <p className="mt-4">{message1}</p>
-          <OutputBox resultText={resultText} />
-        </>
+      {isLoading && (
+        <div className="flex flex-col items-center justify-center py-6">
+          <span className="loading loading-spinner loading-md text-primary" />
+          <p className="text-xs text-base-content/60 mt-2">
+            Computing cryptographic cipher...
+          </p>
+        </div>
       )}
-    </main>
+
+      {message1 && !isLoading && (
+        <div className="alert alert-error text-xs rounded-xl mt-4 shadow-sm">
+          <ExclamationCircleIcon className="w-4 h-4 shrink-0" />
+          <span>{message1}</span>
+        </div>
+      )}
+
+      {!isLoading && <OutputBox resultText={resultText} />}
+    </div>
   );
 }

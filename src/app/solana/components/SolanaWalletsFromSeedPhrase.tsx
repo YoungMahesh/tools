@@ -1,12 +1,19 @@
+"use client";
+
 import { useState } from "react";
 import * as bip39 from "bip39";
 import { Keypair } from "@solana/web3.js";
 import bs58 from "bs58";
 import WalletBox from "@/app/_components/WalletBox";
-//import { HDKey } from "micro-ed25519-hdkey";
-// micro-ed25519-hdkey author message: This package has been deprecated; 
-//    Switch to micro-key-producer: the package has been merged into it
+import { useToast } from "@/app/_components/ToastProvider";
 import HDKey from "micro-key-producer/slip10.js";
+import {
+  SparklesIcon,
+  ArrowPathIcon,
+  ClipboardDocumentIcon,
+  CheckIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
 
 interface IWallet {
   pubAddr: string;
@@ -15,99 +22,212 @@ interface IWallet {
 }
 
 export default function SolanaWalletsFromSeedPhrase() {
+  const { showToast } = useToast();
   const [seedPhrase, setSeedPhrase] = useState("");
   const [seedPhr1, setSeedPhr1] = useState("");
   const [walletsArr, setWalletsArr] = useState<IWallet[]>([]);
   const [isGeneratingWallets, setIsGeneratingWallets] = useState(false);
+  const [copiedMnemonic, setCopiedMnemonic] = useState(false);
+  const [walletCount, setWalletCount] = useState(5);
 
   const deriveWallets = async () => {
+    if (!seedPhrase.trim()) {
+      showToast("Please enter a mnemonic seed phrase", "error");
+      return;
+    }
+
     setWalletsArr([]);
     setIsGeneratingWallets(true);
 
     try {
       const _walletsArr: IWallet[] = [];
-      // https://solana.com/developers/cookbook/wallets/restore-from-mnemonic
-      // arguments: (mnemonic, password)
-      const seed = bip39.mnemonicToSeedSync(seedPhrase, "");
+      const cleanPhrase = seedPhrase.trim();
+      const seed = bip39.mnemonicToSeedSync(cleanPhrase, "");
       const hd = HDKey.fromMasterSeed(new Uint8Array(seed));
-      for (let i = 0; i < 10; i++) {
+
+      for (let i = 0; i < walletCount; i++) {
         const path = `m/44'/501'/${i}'/0'`;
         const keypair = await Keypair.fromSeed(hd.derive(path).privateKey);
         _walletsArr.push({
           pubAddr: keypair.publicKey.toBase58(),
-          privKey: keypair.secretKey.toString(),
+          privKey: "[" + Array.from(keypair.secretKey).join(",") + "]",
           privKeyText: bs58.encode(keypair.secretKey),
         });
       }
-      setSeedPhr1(seedPhrase);
+      setSeedPhr1(cleanPhrase);
       setWalletsArr(_walletsArr);
+      showToast(`Derived ${walletCount} Solana accounts successfully!`, "success");
     } catch (err) {
-      alert("Invalid seed phrase");
-      console.error(err)
+      showToast("Invalid seed phrase (must be standard BIP-39 mnemonic)", "error");
+      console.error(err);
     }
     setIsGeneratingWallets(false);
   };
 
   const generateSeedPhrase = () => {
-    // https://solana.com/developers/cookbook/wallets/generate-mnemonic
-    const mnemonic = bip39.generateMnemonic();
-    console.log(mnemonic);
-    setSeedPhrase(mnemonic);
+    try {
+      const mnemonic = bip39.generateMnemonic();
+      setSeedPhrase(mnemonic);
+      showToast("Generated new 12-word seed phrase!", "success");
+    } catch (err) {
+      showToast("Failed to generate seed phrase", "error");
+      console.error(err);
+    }
+  };
+
+  const copyPhrase = () => {
+    navigator.clipboard.writeText(seedPhr1 || seedPhrase);
+    setCopiedMnemonic(true);
+    showToast("Copied seed phrase to clipboard!", "success");
+    setTimeout(() => setCopiedMnemonic(false), 2000);
+  };
+
+  const clearFields = () => {
+    setSeedPhrase("");
+    setSeedPhr1("");
+    setWalletsArr([]);
   };
 
   return (
-    <section className="grid w-screen place-content-center pb-8">
-      <div className="m-2 p-1">
-        <h3 className="mt-0">Wallets from Seed-Phrase</h3>
-        <div className="mb-5 flex flex-wrap items-center justify-center">
-          <input
-            type="text"
-            placeholder="Seed Phrase"
-            className="input-bordered input-primary input w-full"
-            value={seedPhrase}
-            onChange={(e) => setSeedPhrase(e.target.value)}
-          />
-          <button className="btn-primary btn" onClick={generateSeedPhrase}>
-            Generate New
-          </button>
-          <button className="btn-primary btn m-1" onClick={deriveWallets}>
-            Get Wallets
-          </button>
-        </div>
-        {isGeneratingWallets ? (
-          <p className="text-center">Loading Wallets List...</p>
-        ) : null}
+    <div className="w-full max-w-3xl mx-auto">
+      <div className="p-6 rounded-2xl bg-base-100 border border-base-content/10 shadow-sm">
+        <h3 className="text-base font-bold text-base-content mb-2">
+          HD Wallets from Seed Phrase
+        </h3>
+        <p className="text-xs text-base-content/60 mb-5">
+          Enter a 12 or 24-word BIP-39 mnemonic to derive standard Solana accounts (SLIP-0010 derivation path:{" "}
+          <code className="text-primary font-mono">m/44&apos;/501&apos;/i&apos;/0&apos;</code>).
+        </p>
 
-        {walletsArr.length ? (
-          <div>
-            <div className="mb-2 rounded border p-2">
-              <div className="flex items-center justify-between">
-                <span>Seed Phrase: </span>
+        <div className="space-y-4">
+          <div className="relative">
+            <textarea
+              rows={3}
+              placeholder="Enter 12 or 24 words separated by spaces..."
+              className="textarea textarea-bordered w-full font-mono text-xs rounded-xl bg-base-200/50 focus:bg-base-100 focus:border-primary"
+              value={seedPhrase}
+              onChange={(e) => setSeedPhrase(e.target.value)}
+            />
+            {seedPhrase && (
+              <button
+                type="button"
+                onClick={clearFields}
+                className="absolute right-3 top-3 btn btn-ghost btn-xs btn-circle text-base-content/50 hover:text-base-content"
+                aria-label="Clear seed phrase"
+              >
+                <XMarkIcon className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                className="btn btn-primary btn-sm rounded-xl gap-1.5"
+                onClick={deriveWallets}
+                disabled={isGeneratingWallets}
+              >
+                <ArrowPathIcon
+                  className={`w-4 h-4 ${isGeneratingWallets ? "animate-spin" : ""}`}
+                />
+                <span>Derive Accounts</span>
+              </button>
+              <button
+                type="button"
+                className="btn btn-neutral btn-sm rounded-xl gap-1.5"
+                onClick={generateSeedPhrase}
+              >
+                <SparklesIcon className="w-4 h-4" />
+                <span>Generate Mnemonic</span>
+              </button>
+              {seedPhrase && (
                 <button
-                  className="btn-sm btn"
-                  onClick={() => {
-                    navigator.clipboard.writeText(seedPhrase);
-                    alert(`Copied: ${seedPhrase}`);
-                  }}
+                  type="button"
+                  className="btn btn-ghost btn-sm rounded-xl text-base-content/60"
+                  onClick={clearFields}
                 >
-                  Copy
+                  Clear
+                </button>
+              )}
+            </div>
+
+            {/* Account Count selector */}
+            <div className="flex items-center gap-2 text-xs">
+              <span className="text-base-content/70">Accounts:</span>
+              <select
+                className="select select-bordered select-xs rounded-lg bg-base-200"
+                value={walletCount}
+                onChange={(e) => setWalletCount(Number(e.target.value))}
+              >
+                <option value={5}>5 accounts</option>
+                <option value={10}>10 accounts</option>
+                <option value={20}>20 accounts</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {isGeneratingWallets && (
+          <div className="flex flex-col items-center justify-center py-8">
+            <span className="loading loading-spinner loading-md text-primary" />
+            <p className="text-xs text-base-content/60 mt-2">
+              Deriving Solana Ed25519 keypairs...
+            </p>
+          </div>
+        )}
+
+        {walletsArr.length > 0 && !isGeneratingWallets && (
+          <div className="mt-8 pt-6 border-t border-base-content/10">
+            {/* Active Seed Phrase Banner */}
+            <div className="p-4 rounded-xl bg-base-200/70 border border-base-content/10 mb-6">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-semibold text-base-content/70 uppercase tracking-wider">
+                  Active Seed Phrase
+                </span>
+                <button
+                  type="button"
+                  onClick={copyPhrase}
+                  className="btn btn-ghost btn-xs gap-1 text-xs hover:text-primary transition-colors"
+                >
+                  {copiedMnemonic ? (
+                    <>
+                      <CheckIcon className="w-3.5 h-3.5 text-success" />
+                      <span className="text-success font-medium">Copied</span>
+                    </>
+                  ) : (
+                    <>
+                      <ClipboardDocumentIcon className="w-3.5 h-3.5" />
+                      <span>Copy Phrase</span>
+                    </>
+                  )}
                 </button>
               </div>
-              <p className="m-0 font-bold">{seedPhr1}</p>
-              <div className="flex justify-center"></div>
+              <p className="font-mono text-xs text-base-content font-medium break-words bg-base-100 p-2.5 rounded-lg border border-base-content/5">
+                {seedPhr1}
+              </p>
             </div>
-            {walletsArr.map((wallet, index) => (
-              <WalletBox
-                key={index}
-                publicKey={wallet.pubAddr}
-                privateKey={wallet.privKey}
-                privateKey2={wallet.privKeyText}
-                title={`Account: ${index + 1}`}
-              />
-            ))}
+
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-base-content/70">
+                Derived Solana Accounts ({walletsArr.length})
+              </h4>
+            </div>
+
+            <div className="space-y-3">
+              {walletsArr.map((wallet, index) => (
+                <WalletBox
+                  key={index}
+                  publicKey={wallet.pubAddr}
+                  privateKey={wallet.privKey}
+                  privateKey2={wallet.privKeyText}
+                  title={`Account #${index + 1} (path: m/44'/501'/${index}'/0')`}
+                />
+              ))}
+            </div>
           </div>
-        ) : null}
+        )}
       </div>
-    </section>
+    </div>
   );
 }

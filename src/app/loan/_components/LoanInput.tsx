@@ -1,5 +1,9 @@
+"use client";
+
 import { useState } from "react";
 import { LoanDataRow } from "../_lib/types";
+import { useToast } from "@/app/_components/ToastProvider";
+import { CalculatorIcon, ArrowPathIcon } from "@heroicons/react/24/outline";
 
 export default function LoanInput({
   setDataArr,
@@ -10,93 +14,185 @@ export default function LoanInput({
   setMonthsRequired: (_: number) => void;
   setYearsRequired: (_: number) => void;
 }) {
-  const [amount, setAmount] = useState("");
-  const [interest, setInterest] = useState("");
-  const [emi, setEmi] = useState("");
+  const { showToast } = useToast();
+  const [amount, setAmount] = useState("50000");
+  const [interest, setInterest] = useState("8.5");
+  const [emi, setEmi] = useState("1200");
 
-  const monthlyInterest = (currAmt: number) => {
-    const _interest = parseFloat(interest.replace(/,/g, ""));
-
-    const yearInterest = (currAmt * _interest) / 100;
+  const monthlyInterest = (currAmt: number, rate: number) => {
+    const yearInterest = (currAmt * rate) / 100;
     const monthInterest = yearInterest / 12;
     return parseFloat(monthInterest.toFixed(2));
   };
 
   const generateLoanData = () => {
-    try {
-      const _amount = parseFloat(amount.replace(/,/g, ""));
-      const _emi = parseFloat(emi.replace(/,/g, ""));
+    const cleanAmount = parseFloat(amount.replace(/,/g, ""));
+    const cleanInterest = parseFloat(interest.replace(/,/g, ""));
+    const cleanEmi = parseFloat(emi.replace(/,/g, ""));
 
+    if (isNaN(cleanAmount) || cleanAmount <= 0) {
+      showToast("Please enter a valid loan principal amount", "error");
+      return;
+    }
+    if (isNaN(cleanInterest) || cleanInterest <= 0) {
+      showToast("Please enter a valid annual interest rate", "error");
+      return;
+    }
+    if (isNaN(cleanEmi) || cleanEmi <= 0) {
+      showToast("Please enter a valid monthly EMI amount", "error");
+      return;
+    }
+
+    const firstMonthInterest = monthlyInterest(cleanAmount, cleanInterest);
+    if (cleanEmi <= firstMonthInterest) {
+      showToast(
+        `EMI ($${cleanEmi}) must be greater than monthly interest ($${firstMonthInterest.toFixed(
+          2
+        )}), otherwise loan is never paid off!`,
+        "error"
+      );
+      return;
+    }
+
+    try {
       const dataArr1: LoanDataRow[] = [];
       dataArr1.push({
         month: 0,
-        amount: _amount,
+        amount: cleanAmount,
         debit: 0,
         credit: 0,
       });
+
       let currMonth = 1;
-      let currAmt = _amount;
-      while (currAmt > 0) {
-        const monthInterest = monthlyInterest(currAmt);
+      let currAmt = cleanAmount;
 
-        if (monthInterest > _emi)
-          return alert(
-            "EMI is less than monthly-interest, loan will never be paid off",
-          );
+      while (currAmt > 0 && currMonth <= 600) {
+        const monthInt = monthlyInterest(currAmt, cleanInterest);
 
-        currAmt += monthInterest;
+        currAmt += monthInt;
         currAmt = parseFloat(currAmt.toFixed(2));
         dataArr1.push({
           month: currMonth,
-          debit: monthInterest,
+          debit: monthInt,
           credit: 0,
           amount: currAmt,
         });
-        currAmt -= _emi;
-        currAmt = parseFloat(currAmt.toFixed(2));
+
+        const actualPayment = Math.min(currAmt, cleanEmi);
+        currAmt -= actualPayment;
+        currAmt = Math.max(0, parseFloat(currAmt.toFixed(2)));
         dataArr1.push({
           month: currMonth,
           debit: 0,
-          credit: _emi,
+          credit: actualPayment,
           amount: currAmt,
         });
+
+        if (currAmt <= 0) {
+          break;
+        }
         currMonth += 1;
       }
-      setMonthsRequired(currMonth - 1);
-      setYearsRequired(parseFloat(((currMonth - 1) / 12).toFixed(2)));
+
+      setMonthsRequired(currMonth);
+      setYearsRequired(parseFloat((currMonth / 12).toFixed(2)));
       setDataArr(dataArr1);
+      showToast(`Calculation complete: ${currMonth} months to payoff!`, "success");
     } catch (err) {
-      console.log(err);
-      alert("Invalid Data");
+      console.error(err);
+      showToast("Failed to calculate loan repayment schedule", "error");
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      generateLoanData();
     }
   };
 
   return (
-    <section className="flex flex-wrap justify-center ">
-      <input
-        type="text"
-        className="input-bordered input-primary input m-2 w-full max-w-xs"
-        placeholder="Initial Amount"
-        value={amount}
-        onChange={(e) => setAmount(e.target.value)}
-      />
-      <input
-        type="text"
-        className="input-bordered input-primary input m-2 w-full max-w-xs"
-        placeholder="Yearly Interest (%)"
-        value={interest}
-        onChange={(e) => setInterest(e.target.value)}
-      />
-      <input
-        type="text"
-        className="input-bordered input-primary input m-2 w-full max-w-xs"
-        placeholder="EMI Amount"
-        value={emi}
-        onChange={(e) => setEmi(e.target.value)}
-      />
-      <button className="btn-primary btn m-2" onClick={generateLoanData}>
-        Calculate
-      </button>
-    </section>
+    <div className="p-6 rounded-2xl bg-base-100 border border-base-content/10 shadow-sm mb-6">
+      <h3 className="text-base font-bold text-base-content mb-4 flex items-center gap-2">
+        <CalculatorIcon className="w-5 h-5 text-primary" />
+        <span>Loan Parameters</span>
+      </h3>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4" onKeyDown={handleKeyDown}>
+        {/* Principal Amount */}
+        <div>
+          <label className="block text-xs font-semibold text-base-content/70 mb-1.5">
+            Loan Principal Amount
+          </label>
+          <div className="relative">
+            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-base-content/50 text-xs font-semibold">
+              $
+            </span>
+            <input
+              type="number"
+              min="100"
+              step="any"
+              className="input input-bordered w-full pl-8 text-sm rounded-xl bg-base-200/50 focus:bg-base-100 focus:border-primary font-mono"
+              placeholder="50000"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+            />
+          </div>
+        </div>
+
+        {/* Annual Interest */}
+        <div>
+          <label className="block text-xs font-semibold text-base-content/70 mb-1.5">
+            Annual Interest Rate
+          </label>
+          <div className="relative">
+            <input
+              type="number"
+              min="0.1"
+              max="100"
+              step="0.05"
+              className="input input-bordered w-full pr-8 text-sm rounded-xl bg-base-200/50 focus:bg-base-100 focus:border-primary font-mono"
+              placeholder="8.5"
+              value={interest}
+              onChange={(e) => setInterest(e.target.value)}
+            />
+            <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-base-content/50 text-xs font-semibold">
+              %
+            </span>
+          </div>
+        </div>
+
+        {/* Monthly EMI */}
+        <div>
+          <label className="block text-xs font-semibold text-base-content/70 mb-1.5">
+            Monthly EMI Payment
+          </label>
+          <div className="relative">
+            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-base-content/50 text-xs font-semibold">
+              $
+            </span>
+            <input
+              type="number"
+              min="10"
+              step="any"
+              className="input input-bordered w-full pl-8 text-sm rounded-xl bg-base-200/50 focus:bg-base-100 focus:border-primary font-mono"
+              placeholder="1200"
+              value={emi}
+              onChange={(e) => setEmi(e.target.value)}
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="flex justify-end pt-2">
+        <button
+          type="button"
+          onClick={generateLoanData}
+          className="btn btn-primary btn-sm rounded-xl gap-1.5 px-5"
+        >
+          <ArrowPathIcon className="w-4 h-4" />
+          <span>Calculate Payoff</span>
+        </button>
+      </div>
+    </div>
   );
 }

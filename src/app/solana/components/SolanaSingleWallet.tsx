@@ -1,38 +1,55 @@
+"use client";
+
 import { useState } from "react";
 import { Keypair } from "@solana/web3.js";
 import bs58 from "bs58";
-import KeyBox from "@/app/_components/KeyBox";
+import WalletBox from "@/app/_components/WalletBox";
+import { useToast } from "@/app/_components/ToastProvider";
+import { SparklesIcon, ArrowPathIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
 export default function SolanaSingleWallet() {
+  const { showToast } = useToast();
   const [pubkey, setPubkey] = useState("");
   const [secretKey, setSecretKey] = useState("");
   const [secretKey2, setSecretKey2] = useState("");
   const [privateK, setPrivateK] = useState("");
 
   const derivePublicKey = async () => {
+    if (!privateK.trim()) {
+      showToast("Please enter a private key", "error");
+      return;
+    }
     try {
       let _secKey: Uint8Array = new Uint8Array([]);
-      if (privateK[0] !== "[") {
-        _secKey = bs58.decode(privateK.trim());
+      const trimmed = privateK.trim();
+      if (trimmed[0] !== "[") {
+        _secKey = bs58.decode(trimmed);
       } else {
-        _secKey = Uint8Array.from(JSON.parse(privateK.trim()));
+        _secKey = Uint8Array.from(JSON.parse(trimmed));
       }
       const keypair = await Keypair.fromSecretKey(_secKey);
       setPubkey(keypair.publicKey.toString());
-      setSecretKey("[" + keypair.secretKey + "]");
+      setSecretKey("[" + Array.from(keypair.secretKey).join(",") + "]");
       setSecretKey2(bs58.encode(keypair.secretKey));
+      showToast("Derived Solana public key successfully!", "success");
     } catch (err) {
-      alert("Invalid private key");
-      console.error(err)
+      showToast("Invalid private key (must be Base58 string or Uint8Array JSON)", "error");
+      console.error(err);
     }
   };
 
   const generateKeyPair = async () => {
-    const keypair = await Keypair.generate();
-
-    setPubkey(keypair.publicKey.toString());
-    setSecretKey("[" + keypair.secretKey + "]");
-    setSecretKey2(bs58.encode(keypair.secretKey));
+    try {
+      const keypair = await Keypair.generate();
+      setPubkey(keypair.publicKey.toString());
+      setSecretKey("[" + Array.from(keypair.secretKey).join(",") + "]");
+      setSecretKey2(bs58.encode(keypair.secretKey));
+      setPrivateK(bs58.encode(keypair.secretKey));
+      showToast("Generated new random Solana keypair!", "success");
+    } catch (err) {
+      showToast("Failed to generate Solana keypair", "error");
+      console.error(err);
+    }
   };
 
   const clearFields = () => {
@@ -43,38 +60,78 @@ export default function SolanaSingleWallet() {
   };
 
   return (
-    <section className="grid w-screen place-content-center">
-      <div className="mb-4 items-center justify-center">
-        <input
-          type="text"
-          placeholder="Secret Key"
-          className="input-bordered input-primary input w-full"
-          value={privateK}
-          onChange={(e) => setPrivateK(e.target.value)}
-        />
-        <div className="flex flex-wrap justify-center">
-          <button className="btn-primary btn m-2" onClick={derivePublicKey}>
-            Get Public Key
-          </button>
-          <button className="btn-primary btn m-2" onClick={generateKeyPair}>
-            Generate New
-          </button>
-          <button className="btn-primary btn m-2" onClick={clearFields}>
-            Clear
-          </button>
+    <div className="w-full max-w-2xl mx-auto">
+      <div className="p-6 rounded-2xl bg-base-100 border border-base-content/10 shadow-sm">
+        <h3 className="text-base font-bold text-base-content mb-2">
+          Derive from Secret Key
+        </h3>
+        <p className="text-xs text-base-content/60 mb-5">
+          Enter a Base58-encoded secret key or a byte array like <code className="text-primary font-mono">[12, 45, ...]</code>, or generate a fresh keypair.
+        </p>
+
+        <div className="space-y-4">
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Base58 secret key or [uint8array...]"
+              className="input input-bordered w-full font-mono text-xs pr-10 rounded-xl bg-base-200/50 focus:bg-base-100 focus:border-primary"
+              value={privateK}
+              onChange={(e) => setPrivateK(e.target.value)}
+            />
+            {privateK && (
+              <button
+                type="button"
+                onClick={clearFields}
+                className="absolute right-3 top-1/2 -translate-y-1/2 btn btn-ghost btn-xs btn-circle text-base-content/50 hover:text-base-content"
+                aria-label="Clear input"
+              >
+                <XMarkIcon className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              className="btn btn-primary btn-sm rounded-xl gap-1.5"
+              onClick={derivePublicKey}
+            >
+              <ArrowPathIcon className="w-4 h-4" />
+              <span>Derive Public Key</span>
+            </button>
+            <button
+              type="button"
+              className="btn btn-neutral btn-sm rounded-xl gap-1.5"
+              onClick={generateKeyPair}
+            >
+              <SparklesIcon className="w-4 h-4" />
+              <span>Generate Random</span>
+            </button>
+            {privateK && (
+              <button
+                type="button"
+                className="btn btn-ghost btn-sm rounded-xl text-base-content/60"
+                onClick={clearFields}
+              >
+                Clear
+              </button>
+            )}
+          </div>
         </div>
+
+        {pubkey && (
+          <div className="mt-6 pt-6 border-t border-base-content/10">
+            <h4 className="text-xs font-semibold text-base-content/70 uppercase tracking-wider mb-2">
+              Resulting Solana Wallet
+            </h4>
+            <WalletBox
+              publicKey={pubkey}
+              privateKey={secretKey}
+              privateKey2={secretKey2}
+            />
+          </div>
+        )}
       </div>
-      <div className="flex flex-wrap">
-        {pubkey.length
-          ? [
-              { title1: "Public Key: ", value1: pubkey },
-              { title1: "Secret Key (Uint8Array): ", value1: secretKey },
-              { title1: "Secret Key (Base58): ", value1: secretKey2 },
-            ].map((obj1, idx) => (
-              <KeyBox key={idx} title1={obj1.title1} value1={obj1.value1} />
-            ))
-          : null}
-      </div>
-    </section>
+    </div>
   );
 }
